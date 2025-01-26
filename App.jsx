@@ -1,84 +1,43 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Line } from "react-chartjs-2";
 
-const App = () => {
-  const [chartData, setChartData] = useState(null);
-  const [loading, setLoading] = useState(true);
-
-  // Function to fetch data using Axios
-  const fetchCryptoData = async () => {
-    try {
-      const response = await axios.post(
-        "https://api.livecoinwatch.com/coins/single",
-        {
-          currency: "USD",
-          code: "ETH",
-          meta: true,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-            "x-api-key": "48fd681e-f8f1-4fa3-81a3-0c01989596bf", // Replace with your LiveCoinWatch API key
-          },
-        },
-      );
-      return response.data;
-    } catch (error) {
-      console.error("Error fetching data:", error);
-      throw error;
-    }
-  };
+function App() {
+  const [portfolio, setPortfolio] = useState([]);
 
   useEffect(() => {
-    const loadChartData = async () => {
+    async function fetchExchangeRates() {
       try {
-        const data = await fetchCryptoData();
-        // Set up the chart data
-        setChartData({
-          labels: ["1 Hour", "1 Day", "1 Week", "1 Month", "1 Year"],
-          datasets: [
-            {
-              label: "Price Change (%)",
-              data: [
-                (data.delta.hour - 1) * 100,
-                (data.delta.day - 1) * 100,
-                (data.delta.week - 1) * 100,
-                (data.delta.month - 1) * 100,
-                (data.delta.year - 1) * 100,
-              ],
-              backgroundColor: "rgba(54, 162, 235, 0.2)",
-              borderColor: "rgba(54, 162, 235, 1)",
-              borderWidth: 2,
-              pointBackgroundColor: "rgba(54, 162, 235, 1)",
-            },
-          ],
-        });
-        setLoading(false);
+        const assets = ["BTC", "ETH", "XRP"];
+        const promises = assets.map((asset) =>
+          axios.get(
+            `https://rest.coinapi.io/v1/exchangerate/${asset}/USD?apikey=c7792603-9a9a-4a59-8bd6-e3335c2fd98f`,
+          ),
+        );
+        const responses = await Promise.all(promises);
+        const exchangeRates = responses.reduce((acc, response, index) => {
+          acc[assets[index]] = response.data.rate;
+          return acc;
+        }, {});
+        setPortfolio(exchangeRates);
       } catch (error) {
-        console.error("Error setting chart data:", error);
+        console.error("Error fetching exchange rates:", error);
       }
-    };
-
-    loadChartData();
+    }
+    fetchExchangeRates();
   }, []);
 
-  if (loading) return <p>Loading...</p>;
-
   return (
-    <div style={{ width: "600px", margin: "0 auto" }}>
-      <h1>Ethereum Price Change (%)</h1>
-      <Line
-        data={chartData}
-        options={{
-          responsive: true,
-          plugins: {
-            legend: { display: true, position: "top" },
-          },
-        }}
-      />
+    <div className="App">
+      <h1>CoinAPI Cryptocurrency Portfolio Tracker App</h1>
+      <ul>
+        {Object.entries(portfolio).map(([asset, exchangeRate]) => (
+          <li key={asset}>
+            {asset}: {exchangeRate.toFixed(2)} USD
+          </li>
+        ))}
+      </ul>
     </div>
   );
-};
+}
 
 export default App;
