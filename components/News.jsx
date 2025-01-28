@@ -8,16 +8,10 @@ const News = () => {
 
   useEffect(() => {
     const fetchNews = async () => {
-      const url = "https://cryptonews-api.com/api/v1";
-      const params = {
-        tickers: "BTC",
-        items: 3,
-        page: 1,
-        token: "0ujxuqpuhzlwv9ulp6aqen02hskzdbf5w0bzk4iy",
-      };
-
+      const url =
+        "https://cryptonews-api.com/api/v1?tickers=BTC&items=3&page=1&token=0ujxuqpuhzlwv9ulp6aqen02hskzdbf5w0bzk4iy";
       try {
-        const response = await axios.get(url, { params });
+        const response = await axios.get(url);
         if (response.data && response.data.data) {
           setNews(response.data.data);
         } else {
@@ -38,28 +32,34 @@ const News = () => {
   }
 
   return (
-    <div>
-      <h1>Latest News</h1>
-      {error ? (
-        <p>{error}</p>
-      ) : (
-        <ul>
-          {news.map((item, index) => (
-            <li key={index}>
-              <h2>{item.title}</h2>
-              <p>
+    <div className="container mt-4">
+      <h2 className="text-center mb-4">Latest News</h2>
+      {error && <p className="text-danger">{error}</p>}
+      <div className="list-group">
+        {news.length === 0 ? (
+          <p>No news available.</p>
+        ) : (
+          news.map((item, index) => (
+            <div key={index} className="list-group-item">
+              <h5>{item.title}</h5>
+              <p className="text-muted">
                 <strong>Source:</strong> {item.source_name}
               </p>
               <p>
                 <strong>Published:</strong> {item.date}
               </p>
-              <a href={item.news_url} target="_blank" rel="noopener noreferrer">
+              <p>{item.description}</p>
+              <a
+                href={item.news_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn btn-primary btn-sm">
                 Read more
               </a>
-            </li>
-          ))}
-        </ul>
-      )}
+            </div>
+          ))
+        )}
+      </div>
     </div>
   );
 };
