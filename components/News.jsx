@@ -13,7 +13,7 @@ const News = () => {
         tickers: "BTC",
         items: 3,
         page: 1,
-        token: process.env.REACT_APP_CRYPTO_NEWS_API_TOKEN,
+        token: "0ujxuqpuhzlwv9ulp6aqen02hskzdbf5w0bzk4iy",
       };
 
       try {

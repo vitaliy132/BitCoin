@@ -1,46 +1,22 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
-import PortfolioList from "./PortfolioList";
-import "./App.css";
+import React from "react";
+import "bootstrap/dist/css/bootstrap.min.css";
+import News from "./components/News";
+import Portfolio from "./components/Portfolio";
 const App = () => {
-  const [portfolio, setPortfolio] = useState({});
-  const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const refreshInterval = 5000;
-  const assets = ["BTC", "ETH", "XRP"];
-
-  const fetchExchangeRates = async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const promises = assets.map((asset) =>
-        axios.get(
-          `https://rest.coinapi.io/v1/exchangerate/${asset}/USD?apikey=c7792603-9a9a-4a59-8bd6-e3335c2fd98f`,
-        ),
-      );
-      const responses = await Promise.all(promises);
-      const exchangeRates = responses.reduce((acc, response, index) => {
-        acc[assets[index]] = response.data.rate;
-        return acc;
-      }, {});
-      setPortfolio(exchangeRates);
-    } catch (error) {
-      setError("Error fetching data. Please try again later.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchExchangeRates();
-    const intervalId = setInterval(fetchExchangeRates, refreshInterval);
-
-    return () => clearInterval(intervalId);
-  }, []);
-
   return (
-    <div className="App">
-      <PortfolioList portfolio={portfolio} loading={loading} error={error} />
+    <div className="container mt-4">
+      <h1 className="text-center mb-4">Cryptocurrency Portfolio and News Tracker</h1>
+      <div className="row">
+        {/* Portfolio Component */}
+        <div className="col-md-6">
+          <Portfolio />
+        </div>
+
+        {/* News Component */}
+        <div className="col-md-6">
+          <News />
+        </div>
+      </div>
     </div>
   );
 };
