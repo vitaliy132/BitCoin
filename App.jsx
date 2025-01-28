@@ -1,12 +1,17 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import PortfolioList from "./PortfolioList";
 
 const App = () => {
   const [portfolio, setPortfolio] = useState({});
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
   const refreshInterval = 5000;
+  const assets = ["BTC", "ETH", "XRP"];
 
   const fetchExchangeRates = async () => {
-    const assets = ["BTC", "ETH", "XRP"];
+    setLoading(true);
+    setError(null);
     try {
       const promises = assets.map((asset) =>
         axios.get(
@@ -20,7 +25,9 @@ const App = () => {
       }, {});
       setPortfolio(exchangeRates);
     } catch (error) {
-      console.error("Error fetching exchange rates:", error);
+      setError("Error fetching data. Please try again later.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -30,16 +37,10 @@ const App = () => {
 
     return () => clearInterval(intervalId);
   }, []);
+
   return (
     <div className="App">
-      <h1>CoinAPI Cryptocurrency Portfolio Tracker</h1>
-      <ul>
-        {Object.entries(portfolio).map(([asset, exchangeRate]) => (
-          <li key={asset}>
-            {asset}: {exchangeRate ? exchangeRate.toFixed(2) : "Loading..."} USD
-          </li>
-        ))}
-      </ul>
+      <PortfolioList portfolio={portfolio} loading={loading} error={error} />
     </div>
   );
 };
