@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import PortfolioList from "./PortfolioList";
-
+import "./App.css";
 const App = () => {
   const [portfolio, setPortfolio] = useState({});
   const [error, setError] = useState(null);
