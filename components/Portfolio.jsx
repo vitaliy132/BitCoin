@@ -3,14 +3,11 @@ import axios from "axios";
 
 const Portfolio = () => {
   const [portfolio, setPortfolio] = useState({});
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
   const assets = ["BTC", "ETH", "XRP"];
   const refreshInterval = 5000;
 
   const fetchExchangeRates = async () => {
-    setLoading(true);
     setError(null);
     try {
       const promises = assets.map((asset) =>
@@ -26,8 +23,6 @@ const Portfolio = () => {
       setPortfolio(exchangeRates);
     } catch (error) {
       setError("Error fetching exchange rates. Please try again later.");
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -39,22 +34,22 @@ const Portfolio = () => {
   }, []);
 
   return (
-    <div>
+    <div className="container mt-4">
       <h2>Portfolio</h2>
-      {loading && <p>Loading portfolio...</p>}
       {error && <p className="text-danger">{error}</p>}
-      {!loading && Object.keys(portfolio).length === 0 && !error && (
-        <p>No portfolio data available.</p>
-      )}
-      {Object.keys(portfolio).length > 0 && (
-        <ul className="list-group">
-          {Object.entries(portfolio).map(([asset, exchangeRate]) => (
-            <li key={asset} className="list-group-item d-flex justify-content-between">
-              <strong>{asset}</strong> <span>{exchangeRate.toFixed(2)} USD</span>
-            </li>
-          ))}
-        </ul>
-      )}
+      <div className={`portfolio-list ${Object.keys(portfolio).length > 0 ? "fade-in" : ""}`}>
+        {Object.keys(portfolio).length === 0 ? (
+          <p>No portfolio data available.</p>
+        ) : (
+          <ul className="list-group">
+            {Object.entries(portfolio).map(([asset, exchangeRate]) => (
+              <li key={asset} className="list-group-item d-flex justify-content-between">
+                <strong>{asset}</strong> <span>{exchangeRate.toFixed(2)} USD</span>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
     </div>
   );
 };
