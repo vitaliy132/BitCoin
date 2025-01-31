@@ -8,12 +8,13 @@ const News = () => {
 
   useEffect(() => {
     const fetchNews = async () => {
-      const url =
-        "https://cryptonews-api.com/api/v1?tickers=BTC&items=3&page=1&token=0ujxuqpuhzlwv9ulp6aqen02hskzdbf5w0bzk4iy";
+      const API_KEY = "8b3ddd5dc13243b7a3648d23262820f2"; // Your actual NewsAPI key
+      const url = `https://newsapi.org/v2/everything?q=bitcoin&language=en&sortBy=publishedAt&pageSize=5&apiKey=${API_KEY}`;
+
       try {
         const response = await axios.get(url);
-        if (response.data && response.data.data) {
-          setNews(response.data.data);
+        if (response.data && response.data.articles) {
+          setNews(response.data.articles); // NewsAPI returns articles under 'articles'
         } else {
           setError("No news data available.");
         }
@@ -33,7 +34,7 @@ const News = () => {
 
   return (
     <div className="container mt-4">
-      <h2 className="text-center mb-4">Latest News</h2>
+      <h2 className="text-center mb-4">Latest Bitcoin News</h2>
       {error && <p className="text-danger">{error}</p>}
       <div className="list-group">
         {news.length === 0 ? (
@@ -43,14 +44,14 @@ const News = () => {
             <div key={index} className="list-group-item">
               <h5>{item.title}</h5>
               <p className="text-muted">
-                <strong>Source:</strong> {item.source_name}
+                <strong>Source:</strong> {item.source.name}
               </p>
               <p>
-                <strong>Published:</strong> {item.date}
+                <strong>Published:</strong> {item.publishedAt}
               </p>
               <p>{item.description}</p>
               <a
-                href={item.news_url}
+                href={item.url}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="btn btn-primary btn-sm">
