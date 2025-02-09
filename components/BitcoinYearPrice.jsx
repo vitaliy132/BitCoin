@@ -9,7 +9,7 @@ function BitcoinPricePrediction() {
   useEffect(() => {
     const fetchPrediction = async () => {
       try {
-        const response = await fetch("http://127.0.0.1:5000/predict");
+        const response = await fetch("https://training-2hyn.onrender.com/predict");
         if (!response.ok) throw new Error("Failed to fetch prediction");
         const data = await response.json();
         setPrediction(data.predicted_price);
