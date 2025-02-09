@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import "bootstrap/dist/css/bootstrap.min.css";
 
 const Portfolio = () => {
   const [portfolio, setPortfolio] = useState({});
@@ -35,20 +36,27 @@ const Portfolio = () => {
 
   return (
     <div className="container mt-4">
-      <h2>Portfolio</h2>
-      {error && <p className="text-danger">{error}</p>}
-      <div className={`portfolio-list ${Object.keys(portfolio).length > 0 ? "fade-in" : ""}`}>
-        {Object.keys(portfolio).length === 0 ? (
-          <p>No portfolio data available.</p>
-        ) : (
-          <ul className="list-group">
-            {Object.entries(portfolio).map(([asset, exchangeRate]) => (
-              <li key={asset} className="list-group-item d-flex justify-content-between">
-                <strong>{asset}</strong> <span>{exchangeRate.toFixed(2)} USD</span>
-              </li>
-            ))}
-          </ul>
-        )}
+      <div className="card shadow-lg p-3 mb-5 bg-white rounded">
+        <div className="card-body">
+          <h2 className="card-title text-center mb-3">Crypto Portfolio</h2>
+          {error && <p className="text-danger text-center">{error}</p>}
+          <div className="portfolio-list">
+            {Object.keys(portfolio).length === 0 ? (
+              <p className="text-center text-muted">No portfolio data available.</p>
+            ) : (
+              <ul className="list-group">
+                {Object.entries(portfolio).map(([asset, exchangeRate]) => (
+                  <li
+                    key={asset}
+                    className="list-group-item d-flex justify-content-between align-items-center">
+                    <strong>{asset}</strong>
+                    <span className="badge bg-primary fs-6">{exchangeRate.toFixed(2)} USD</span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );
