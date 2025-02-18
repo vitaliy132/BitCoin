@@ -1,27 +1,28 @@
 import React from "react";
-import "bootstrap/dist/css/bootstrap.min.css";
 import News from "./components/News";
 import Portfolio from "./components/Portfolio";
 import BitcoinPricePrediction from "./components/BitcoinYearPrice";
 
+const Navbar = () => {
+  return (
+    <nav>
+      <h1>Crypto Tracker</h1>
+      <div>
+        <BitcoinPricePrediction />
+      </div>
+    </nav>
+  );
+};
+
 const App = () => {
   return (
-    <div className="container mt-4">
-      <h1 className="text-center mb-4">Cryptocurrency Portfolio & News Tracker</h1>
-
-      <div className="row">
-        {/* Left Side: Portfolio + Bitcoin Predictor */}
-        <div className="col-md-6">
+    <div>
+      <Navbar />
+      <div>
+        <div>
           <Portfolio />
-          <div className="mt-4">
-            {" "}
-            {/* Adds spacing between Portfolio & Predictor */}
-            <BitcoinPricePrediction />
-          </div>
         </div>
-
-        {/* Right Side: News */}
-        <div className="col-md-6">
+        <div>
           <News />
         </div>
       </div>

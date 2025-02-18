@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import "bootstrap/dist/css/bootstrap.min.css";
 
 function BitcoinPricePrediction() {
   const [prediction, setPrediction] = useState(null);
@@ -24,19 +23,15 @@ function BitcoinPricePrediction() {
   }, []);
 
   return (
-    <div className="container mt-4">
-      <div className="card text-center shadow-lg">
-        <div className="card-body">
-          <h2 className="card-title">Bitcoin Price Prediction</h2>
-          {loading ? (
-            <p className="text-primary">Loading...</p>
-          ) : error ? (
-            <p className="text-danger">Error: {error}</p>
-          ) : (
-            <h3 className="text-success">Predicted Price (2025): ${prediction.toFixed(2)}</h3>
-          )}
-        </div>
-      </div>
+    <div>
+      <h2>Bitcoin Price Prediction</h2>
+      {loading ? (
+        <p>Loading...</p>
+      ) : error ? (
+        <p>Error: {error}</p>
+      ) : (
+        <h3>Predicted Price (2025): ${prediction.toFixed(2)}</h3>
+      )}
     </div>
   );
 }

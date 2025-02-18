@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import "bootstrap/dist/css/bootstrap.min.css";
 
 const News = () => {
   const [news, setNews] = useState([]);
@@ -30,43 +29,33 @@ const News = () => {
   }, []);
 
   return (
-    <div className="container mt-4">
-      <div className="card shadow-lg">
-        <div className="card-body">
-          <h2 className="card-title text-center mb-4">Latest Bitcoin News</h2>
-          {loading ? (
-            <p className="text-primary text-center">Loading...</p>
-          ) : error ? (
-            <p className="text-danger text-center">{error}</p>
+    <div>
+      <h2>Latest Bitcoin News</h2>
+      {loading ? (
+        <p>Loading...</p>
+      ) : error ? (
+        <p>{error}</p>
+      ) : (
+        <div>
+          {news.length === 0 ? (
+            <p>No news available.</p>
           ) : (
-            <div className="list-group">
-              {news.length === 0 ? (
-                <p className="text-center">No news available.</p>
-              ) : (
-                news.map((item, index) => (
-                  <div key={index} className="list-group-item">
-                    <h5 className="mb-2">{item.title}</h5>
-                    <p className="text-muted mb-1">
-                      <strong>Source:</strong> {item.source.name}
-                    </p>
-                    <p className="mb-1">
-                      <strong>Published:</strong> {new Date(item.publishedAt).toLocaleString()}
-                    </p>
-                    <p className="mb-2">{item.description}</p>
-                    <a
-                      href={item.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="btn btn-primary btn-sm">
-                      Read more
-                    </a>
-                  </div>
-                ))
-              )}
-            </div>
+            news.map((item, index) => (
+              <div key={index}>
+                <h5>{item.title}</h5>
+                <p>
+                  <strong>Source:</strong> {item.source.name} | <strong>Published:</strong>{" "}
+                  {new Date(item.publishedAt).toLocaleString()}
+                </p>
+                <p>{item.description}</p>
+                <a href={item.url} target="_blank" rel="noopener noreferrer">
+                  Read more
+                </a>
+              </div>
+            ))
           )}
         </div>
-      </div>
+      )}
     </div>
   );
 };
