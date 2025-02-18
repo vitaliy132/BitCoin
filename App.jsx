@@ -2,6 +2,7 @@ import React from "react";
 import News from "./components/News";
 import Portfolio from "./components/Portfolio";
 import BitcoinPricePrediction from "./components/BitcoinYearPrice";
+import "./App.css";
 
 const Navbar = () => {
   return (
