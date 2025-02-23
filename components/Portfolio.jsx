@@ -6,50 +6,58 @@ const Portfolio = () => {
   const [error, setError] = useState(null);
   const assets = ["BTC", "ETH", "XRP"];
   const refreshInterval = 5000;
+  const apiKey = "c7792603-9a9a-4a59-8bd6-e3335c2fd98f";
 
   const fetchExchangeRates = async () => {
     setError(null);
     try {
       const promises = assets.map((asset) =>
-        axios.get(
-          `https://rest.coinapi.io/v1/exchangerate/${asset}/USD?apikey=c7792603-9a9a-4a59-8bd6-e3335c2fd98f`,
-        ),
+        axios.get(`https://rest.coinapi.io/v1/exchangerate/${asset}/USD?apikey=${apiKey}`),
       );
-      const responses = await Promise.all(promises);
+
+      const responses = await Promise.allSettled(promises);
+
       const exchangeRates = responses.reduce((acc, response, index) => {
-        acc[assets[index]] = response.data.rate;
+        if (response.status === "fulfilled") {
+          acc[assets[index]] = response.value.data.rate;
+        }
         return acc;
       }, {});
-      setPortfolio(exchangeRates);
+
+      if (
+        Object.keys(exchangeRates).length > 0 &&
+        JSON.stringify(exchangeRates) !== JSON.stringify(portfolio)
+      ) {
+        setPortfolio(exchangeRates);
+      }
     } catch (error) {
       setError("Error fetching exchange rates. Please try again later.");
     }
   };
 
   useEffect(() => {
-    fetchExchangeRates();
+    fetchExchangeRates(); // Initial fetch
     const intervalId = setInterval(fetchExchangeRates, refreshInterval);
 
-    return () => clearInterval(intervalId);
-  }, []);
+    return () => clearInterval(intervalId); // Cleanup interval on unmount
+  }, []); // Only runs once on mount
 
   return (
     <div>
-      <h2>Crypto Portfolio</h2>
-      {error && <p>{error}</p>}
-      <div>
-        {Object.keys(portfolio).length === 0 ? (
-          <p>No portfolio data available.</p>
-        ) : (
-          <ul>
-            {Object.entries(portfolio).map(([asset, exchangeRate]) => (
-              <li key={asset}>
-                <strong>{asset}</strong>: {exchangeRate.toFixed(2)} USD
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
+      <h5>Cryptocurrency Prices</h5>
+      {error ? (
+        <p className="text-danger">{error}</p>
+      ) : Object.keys(portfolio).length === 0 ? (
+        <p>Loading...</p>
+      ) : (
+        <ul>
+          {Object.entries(portfolio).map(([asset, exchangeRate]) => (
+            <li key={asset}>
+              <strong>{asset}</strong>: {exchangeRate.toFixed(2)} USD
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 };

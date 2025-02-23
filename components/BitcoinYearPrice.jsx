@@ -1,36 +1,49 @@
 import { useState, useEffect } from "react";
 
+const API_URL = "https://training-2hyn.onrender.com/predict";
+
 function BitcoinPricePrediction() {
   const [prediction, setPrediction] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
+    let isMounted = true;
+
     const fetchPrediction = async () => {
       try {
-        const response = await fetch("https://training-2hyn.onrender.com/predict");
+        const response = await fetch(API_URL);
         if (!response.ok) throw new Error("Failed to fetch prediction");
+
         const data = await response.json();
-        setPrediction(data.predicted_price);
-      } catch (error) {
-        setError(error.message);
+        if (isMounted) {
+          setPrediction(data.predicted_price ?? "N/A");
+        }
+      } catch (err) {
+        if (isMounted) setError(err.message);
       } finally {
-        setLoading(false);
+        if (isMounted) setLoading(false);
       }
     };
 
     fetchPrediction();
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   return (
     <div>
-      <h2>Bitcoin Price Prediction</h2>
+      <h5>Bitcoin Price Prediction</h5>
       {loading ? (
         <p>Loading...</p>
       ) : error ? (
-        <p>Error: {error}</p>
+        <p className="text-danger">Error: {error}</p>
+      ) : isNaN(prediction) || prediction === "N/A" ? (
+        <p className="text-warning">Prediction not available</p>
       ) : (
-        <h3>Predicted Price (2025): ${prediction.toFixed(2)}</h3>
+        <h3>${parseFloat(prediction).toFixed(2)}</h3>
       )}
     </div>
   );
